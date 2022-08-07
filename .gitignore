@@ -1,0 +1,11 @@
+# System files.
+.DS_Store
+.idea/
+.vscode/
+
+# Python files.
+__pycache__/
+.ipynb_checkpoints/
+
+# Numpy Matrix files.
+*.npy

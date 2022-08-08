@@ -13,8 +13,10 @@ class Linear(Module):
     """
     w: jnp.ndarray = to.node()
     b: jnp.ndarray = to.node()
+    use_bias: bool = to.static()
 
-    def __init__(self, key: rnd.PRNGKey, in_size: int, out_size: int, use_bias: bool = True):
+
+    def __init__(self, key: jnp.ndarray, in_size: int, out_size: int, use_bias: bool = True):
         """
         * key: PRNG Key.
         * in_size (int): Input dimensions.
@@ -23,12 +25,20 @@ class Linear(Module):
         """
         super(Module, self).__init__()
         w_key, b_key = rnd.split(key, 2)
-        self.w = rnd.normal(w_key, shape=(in_size, out_size))
-        self.b = jnp.zeros((out_size,)) if use_bias else rnd.normal(
-            b_key, shape=(out_size,))
+        self.w = rnd.uniform(w_key, shape=(in_size, out_size))
+        if use_bias:
+            self.b = rnd.uniform(b_key, shape=(out_size,))
+        else:
+            self.b = jnp.zeros((out_size,))
+        self.use_bias = use_bias
+
 
     def __call__(self, x: jnp.ndarray):
         """
         * x (jnp.ndarray): Input for the linear layer.
         """
-        x = x @ self.w + self.b
+        x = x @ self.w
+        if self.use_bias:
+            return x + self.b
+        else:
+            return x

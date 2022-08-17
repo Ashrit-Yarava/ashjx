@@ -1,9 +1,8 @@
+import jax
 import jax.numpy as jnp
 import jax.random as rnd
-from jax import lax
-import treeo as to
-from ashjx.nn.module import Module
-
+from ashjx.module import Module
+from ashjx.params import param, sparam
 
 class Linear(Module):
     """
@@ -11,12 +10,12 @@ class Linear(Module):
     ---
     A simple linear layer with optional bias.
     """
-    w: jnp.ndarray = to.node()
-    b: jnp.ndarray = to.node()
-    use_bias: bool = to.static()
+    w: jnp.ndarray = param()
+    b: jnp.ndarray = param()
+    use_bias: bool = sparam()
 
 
-    def __init__(self, key: jnp.ndarray, in_size: int, out_size: int, use_bias: bool = True):
+    def __init__(self, key: jax.random.KeyArray, in_size: int, out_size: int, use_bias: bool = True):
         """
         * key: PRNG Key.
         * in_size (int): Input dimensions.

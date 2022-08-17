@@ -11,7 +11,7 @@ class Module(to.Tree):
     """
 
     @abstractmethod
-    def __init__(self, key: jax.numpy.ndarray,
+    def __init__(self, key: jax.random.KeyArray,
                  *args, **kwargs):
         """
         * key: the random PRNG key that should be passed in.

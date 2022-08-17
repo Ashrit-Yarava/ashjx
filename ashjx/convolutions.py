@@ -1,10 +1,10 @@
 import jax
 import jax.numpy as jnp
 import jax.random as rnd
-import treeo as to
 import itertools as it
 from typing import Sequence
-from ashjx.nn import Module
+from ashjx.module import Module
+from ashjx.params import param, sparam
 
 
 class Conv(Module):
@@ -13,18 +13,18 @@ class Conv(Module):
     ---
     Perform a n-dimensional convolution with controllable padding and stride.
     """
-    w: jnp.ndarray = to.node()
-    b: jnp.ndarray = to.node()
-    dims: int = to.static()
-    kernel_size: Sequence[int] = to.static()
-    stride: Sequence[int] = to.static()
-    padding: str = to.static()
-    dilation: Sequence[int] = to.static()
-    use_bias: bool = to.static()
+    w: jnp.ndarray = param()
+    b: jnp.ndarray = param()
+    dims: int = sparam()
+    kernel_size: Sequence[int] = sparam()
+    stride: Sequence[int] = sparam()
+    padding: str = sparam()
+    dilation: Sequence[int] = sparam()
+    use_bias: bool = sparam()
 
 
     def __init__(self, 
-                 key: jnp.ndarray,
+                 key: rnd.KeyArray,
                  dims: int,
                  in_channels: int,
                  out_channels: int,
@@ -48,6 +48,7 @@ class Conv(Module):
         self.dims = dims
         self.kernel_size = tuple(it.repeat(kernel_size, dims))
         self.stride = tuple(it.repeat(stride, dims))
+        self.dilation = tuple(it.repeat(dilation, dims))
         self.padding = padding
         lim = 1 / jnp.sqrt(in_channels * jnp.prod(kernel_size))
         self.weight = rnd.uniform(wkey, (out_channels, in_channels) + self.kernel_size, minval=-lim, maxval=lim)
